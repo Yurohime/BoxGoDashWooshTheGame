@@ -35,16 +35,6 @@
 			path = DSKSpriteKitVersion;
 			sourceTree = "<group>";
 		};
-		EF16CDDF2E47351C0052784A /* DSKSpriteKitVersionTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DSKSpriteKitVersionTests;
-			sourceTree = "<group>";
-		};
-		EF16CDE92E47351C0052784A /* DSKSpriteKitVersionUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DSKSpriteKitVersionUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,8 +66,6 @@
 			isa = PBXGroup;
 			children = (
 				EF16CDD12E47351B0052784A /* DSKSpriteKitVersion */,
-				EF16CDDF2E47351C0052784A /* DSKSpriteKitVersionTests */,
-				EF16CDE92E47351C0052784A /* DSKSpriteKitVersionUITests */,
 				EF16CDD02E47351B0052784A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -130,9 +118,6 @@
 			dependencies = (
 				EF16CDDE2E47351C0052784A /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				EF16CDDF2E47351C0052784A /* DSKSpriteKitVersionTests */,
-			);
 			name = DSKSpriteKitVersionTests;
 			packageProductDependencies = (
 			);
@@ -152,9 +137,6 @@
 			);
 			dependencies = (
 				EF16CDE82E47351C0052784A /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				EF16CDE92E47351C0052784A /* DSKSpriteKitVersionUITests */,
 			);
 			name = DSKSpriteKitVersionUITests;
 			packageProductDependencies = (
