@@ -17,11 +17,13 @@ struct RootView: View {
             case "menu":
                 MenuView()
                     .environmentObject(viewRouter)
-            default :
+            case "game":
+                GameView()
+                    .environmentObject(viewRouter)
+            default:
                 MenuView()
                     .environmentObject(viewRouter)
             }
-            
         }
     }
 }

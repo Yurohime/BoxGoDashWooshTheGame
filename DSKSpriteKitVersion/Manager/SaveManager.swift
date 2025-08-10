@@ -1,92 +1,66 @@
 //
 //  SaveManager.swift
-//  Lolz's DnD Helper
+//  DSKSpriteKitVersion
 //
-//  Created by Alberto Halim Limantoro on 04/08/25.
+//  Created by Alberto Halim Limantoro on 10/08/25.
 //
+
 
 import Foundation
 
-public struct ExpTask: Codable, Identifiable {
-    public let id: UUID
-    public var name: String
-    public var expValue: Int
+/// A simple struct to hold the game data that we want to save.
+struct GameData: Codable {
+    var highScore: Int
 }
 
-public struct Player: Codable, Identifiable {
-    public let id: UUID
-    public var name: String
-    public var exp: Int
-    public var completedTasks: [UUID: Bool]
-}
+/// A singleton class to manage saving and loading game data.
+class SaveManager {
+    /// The shared singleton instance of the SaveManager.
+    static let shared = SaveManager()
+    
+    /// The URL to the JSON file where the game data is stored.
+    private let fileURL: URL
 
+    private init() {
+        // Find the app's documents directory and create a path for our save file.
+        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            fatalError("Unable to access document directory.")
+        }
+        fileURL = url.appendingPathComponent("gameData.json")
+    }
 
-public class SaveManager {
-    
-    public static let shared = SaveManager()
-    
-    private let playersFilename = "players.json"
-    private let tasksFilename = "tasks.json"
-    
-    private func getURL(for filename: String) -> URL {
-        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return directory.appendingPathComponent(filename)
-    }
-    
-    private init() {}
-    
-    // MARK: - Player Data Functions
-    
-    public func save(players: [Player]) {
+    /// Saves the player's score, but only if it's a new high score.
+    /// - Parameter score: The score to be saved.
+    func saveHighScore(score: Int) {
+        let currentHighScore = loadHighScore()
+        
+        // We only overwrite the file if the new score is better.
+        guard score > currentHighScore else { return }
+        
+        let gameData = GameData(highScore: score)
         do {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
-            let data = try encoder.encode(players)
-            try data.write(to: getURL(for: playersFilename), options: [.atomicWrite])
-            print("Players saved successfully.")
+            // Encode the GameData struct into JSON data.
+            let data = try JSONEncoder().encode(gameData)
+            // Write the data to the file.
+            try data.write(to: fileURL)
         } catch {
-            print("Failed to save players: \(error.localizedDescription)")
+            print("Error saving high score: \(error.localizedDescription)")
         }
     }
-    
-    public func loadPlayers() -> [Player] {
+
+    /// Loads the high score from the JSON file.
+    /// - Returns: The saved high score, or 0 if no score has been saved yet.
+    func loadHighScore() -> Int {
         do {
-            let data = try Data(contentsOf: getURL(for: playersFilename))
-            let decoder = JSONDecoder()
-            let players = try decoder.decode([Player].self, from: data)
-            print("Players loaded successfully.")
-            return players
+            // Read the data from the file.
+            let data = try Data(contentsOf: fileURL)
+            // Decode the JSON data back into our GameData struct.
+            let gameData = try JSONDecoder().decode(GameData.self, from: data)
+            return gameData.highScore
         } catch {
-            print("Failed to load players, returning empty array: \(error.localizedDescription)")
-            return []
-        }
-    }
-    
-    // MARK: - ExpTask Data Functions
-    
-    public func save(tasks: [ExpTask]) {
-        do {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
-            let data = try encoder.encode(tasks)
-            try data.write(to: getURL(for: tasksFilename), options: [.atomicWrite])
-            print("Tasks saved successfully.")
-        } catch {
-            print("Failed to save tasks: \(error.localizedDescription)")
-        }
-    }
-    
-    public func loadTasks() -> [ExpTask] {
-        do {
-            let data = try Data(contentsOf: getURL(for: tasksFilename))
-            let decoder = JSONDecoder()
-            let tasks = try decoder.decode([ExpTask].self, from: data)
-            print("Tasks loaded successfully.")
-            return tasks
-        } catch {
-            print("Failed to load tasks, returning empty array: \(error.localizedDescription)")
-            return []
+            // If the file doesn't exist or there's a decoding error, it means no high score is set.
+            // We'll just return 0 and not log an error, as this is expected on the first run.
+            return 0
         }
     }
 }
-

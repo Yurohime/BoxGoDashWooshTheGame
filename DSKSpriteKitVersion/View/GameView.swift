@@ -9,19 +9,29 @@ import SwiftUI
 import SpriteKit
 
 struct GameView: View {
-    var body: some View {
-        SpriteView(scene: makeGameScene())
-            .ignoresSafeArea()
-    }
-    
-    func makeGameScene() -> SKScene {
+    @EnvironmentObject var viewRouter: ViewRouter
+
+    var scene: GameScene {
         let scene = GameScene()
-        scene.size = UIScreen.main.bounds.size
-        scene.scaleMode = .resizeFill
+        scene.size = CGSize(width: 390, height: 844)
+        scene.scaleMode = .fill
+
+        // Assign game over callback
+        scene.onGameOver = {
+            DispatchQueue.main.async {
+                viewRouter.currentPage = "menu"
+            }
+        }
         return scene
+    }
+
+    var body: some View {
+        SpriteView(scene: scene)
+            .ignoresSafeArea()
     }
 }
 
 #Preview {
     GameView()
 }
+
