@@ -522,7 +522,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         hasLaunched = false
         currentScore = 0 // Reset score for the new game
         physicsWorld.gravity = .zero
-        didMove(to: view!)
+        //didMove(to: view!)
         triggerGameOver()
     }
     

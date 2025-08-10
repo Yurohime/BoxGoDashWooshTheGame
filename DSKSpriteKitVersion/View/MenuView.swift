@@ -12,19 +12,19 @@ public struct MenuView: View {
     @EnvironmentObject var viewRouter: ViewRouter
     @State private var animate = false
     @State private var showWhiteboi = true
-    @State private var fadeOverlayOpacity: Double = 1.0 // start fully white
-    
-    // --- NEW: State variable to hold the high score ---
+    @State private var fadeOverlayOpacity: Double = 1.0 // Start fully white
     @State private var highScore: Int = 0
-    
+
     public var body: some View {
         ZStack {
+            // Background
             Image("Background")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
             
             VStack {
+                // Logo
                 Image("Logo")
                     .resizable()
                     .scaledToFit()
@@ -33,25 +33,28 @@ public struct MenuView: View {
                     .padding(.top, 80)
                     .offset(y: animate ? -200 : 0)
                 
-                // --- MODIFIED: Display High Score with a thin font ---
+                // High score
                 if highScore > 0 {
                     Text("High Score: \(highScore)")
-                        .font(.system(size: 30, weight: .light, design: .default))
+                        .font(.system(size: 30, weight: .light))
                         .foregroundColor(.white)
                         .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
                         .padding(.top, 10)
-                        .offset(y: animate ? -200 : 0) // Animate with the logo
+                        .offset(y: animate ? -200 : 0)
                         .transition(.opacity.combined(with: .move(edge: .top)))
                 }
                 
                 Spacer()
                 
+                // Play button
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.5)) {
-                        animate = true
+                        animate = true           // Move logo & button
                         showWhiteboi = false
+                        fadeOverlayOpacity = 1.0 // Fade to white at same time
                     }
                     
+                    // Switch to game after fade finishes
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         viewRouter.currentPage = "game"
                     }
@@ -81,15 +84,13 @@ public struct MenuView: View {
             Color.white
                 .ignoresSafeArea()
                 .opacity(fadeOverlayOpacity)
-                .allowsHitTesting(false) // Allow taps to pass through
+                .allowsHitTesting(false)
         }
         .onAppear {
-            // Fade out the white overlay
+            // Fade in from white
             withAnimation(.easeInOut(duration: 1.0)) {
                 fadeOverlayOpacity = 0.0
             }
-            
-            // --- NEW: Load the high score when the view appears ---
             highScore = SaveManager.shared.loadHighScore()
         }
     }
